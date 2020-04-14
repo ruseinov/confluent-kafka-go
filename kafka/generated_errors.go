@@ -12,7 +12,7 @@ type ErrorCode int
 
 // String returns a human readable representation of an error code
 func (c ErrorCode) String() string {
-      return C.GoString(C.rd_kafka_err2str(C.rd_kafka_resp_err_t(c)))
+	return C.GoString(C.rd_kafka_err2str(C.rd_kafka_resp_err_t(c)))
 }
 
 const (

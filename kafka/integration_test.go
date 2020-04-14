@@ -1533,12 +1533,17 @@ func TestAdminGetMetadata(t *testing.T) {
 
 }
 
+<<<<<<< HEAD
 // Test AdminClient ClusterID.
 func TestAdminClient_ClusterID(t *testing.T) {
+=======
+func TestConsumerGetConsumerGroupMetadata(t *testing.T) {
+>>>>>>> 390b650dfc895c66fe373d3d3c923aba2b480fac
 	if !testconfRead() {
 		t.Skipf("Missing testconf.json")
 	}
 
+<<<<<<< HEAD
 	config := &ConfigMap{"bootstrap.servers": testconf.Brokers}
 	if err := config.updateFromTestconf(); err != nil {
 		t.Fatalf("Failed to update test configuration: %s\n", err)
@@ -1564,10 +1569,137 @@ func TestAdminClient_ClusterID(t *testing.T) {
 
 // Test AdminClient ControllerID.
 func TestAdminClient_ControllerID(t *testing.T) {
+=======
+	// Prime topic with test messages
+	createTestMessages()
+	producerTest(t, "Priming producer", p0TestMsgs, producerCtrl{silent: true},
+		func(p *Producer, m *Message, drChan chan Event) {
+			p.ProduceChannel() <- m
+		})
+
+	/* Create consumer and subscribe to test-topic
+	 * so that consumer gets registered in broker. */
+	consumerConf := ConfigMap{"bootstrap.servers": testconf.Brokers,
+		"group.id": testconf.GroupID,
+	}
+
+	consumerConf.updateFromTestconf()
+
+	t.Logf("Creating consumer and subscribe to test-topic")
+	c, err := NewConsumer(&consumerConf)
+	if err != nil {
+		t.Fatalf("NewConsumer: %v", err)
+	}
+	defer c.Close()
+
+	c.Subscribe(testconf.Topic, nil)
+
+	// FIXME: wait for topics to become available in metadata
+	time.Sleep(5000 * time.Millisecond)
+
+	// Test
+	cgMetadata, err := c.GetConsumerGroupMetadata(&testconf.GroupID, 5*1000)
+	if err != nil {
+		t.Errorf("Failed to get consumer group metadata for Group %s. Error %s\n", testconf.GroupID, err)
+	}
+	t.Logf("Consumer group meta data for group %s was: %v\n", testconf.GroupID, cgMetadata)
+
+	// Try to find test-topic name in metadata
+	found := false
+	for _, topic := range cgMetadata[0].Members[0].MemberMetadata.Topics {
+		if topic == testconf.Topic {
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf("Failed to find topic %s in subscribed metadata for consumergroup %s", testconf.Topic, testconf.GroupID)
+	}
+
+	// Test if we can get more consumergroups
+	cgMetadata, err = c.GetConsumerGroupMetadata(nil, 5*1000)
+	if err != nil {
+		t.Errorf("Failed to get consumer group metadata. Error %s\n", cgMetadata)
+	}
+	t.Logf("Consumer group meta data was: %v\n", cgMetadata)
+}
+
+func TestProducerGetConsumerGroupMetadata(t *testing.T) {
 	if !testconfRead() {
 		t.Skipf("Missing testconf.json")
 	}
 
+	// Prime topic with test messages
+	createTestMessages()
+	producerTest(t, "Priming producer", p0TestMsgs, producerCtrl{silent: true},
+		func(p *Producer, m *Message, drChan chan Event) {
+			p.ProduceChannel() <- m
+		})
+
+	/* Create consumer and subscribe to test-topic
+	 * so that consumer gets registered in broker. */
+	consumerConf := ConfigMap{"bootstrap.servers": testconf.Brokers,
+		"group.id": testconf.GroupID,
+	}
+
+	consumerConf.updateFromTestconf()
+
+	t.Logf("Creating consumer and subscribe to test-topic")
+	c, err := NewConsumer(&consumerConf)
+	if err != nil {
+		t.Fatalf("NewConsumer: %v", err)
+	}
+	defer c.Close()
+
+	c.Subscribe(testconf.Topic, nil)
+
+	// create new producer to test producer API
+	producerConf := ConfigMap{"bootstrap.servers": testconf.Brokers,
+		"api.version.request": "true",
+		"acks":                1}
+
+	producerConf.updateFromTestconf()
+
+	p, err := NewProducer(&producerConf)
+	if err != nil {
+		panic(err)
+	}
+
+	// FIXME: wait for topics to become available in metadata
+	time.Sleep(5000 * time.Millisecond)
+
+	// Test
+	cgMetadata, err := p.GetConsumerGroupMetadata(&testconf.GroupID, 5*1000)
+	if err != nil {
+		t.Errorf("Failed to get consumer group metadata for Group %s. Error %s\n", testconf.GroupID, err)
+	}
+	t.Logf("Consumer group meta data for group %s was: %v\n", testconf.GroupID, cgMetadata)
+
+	// Try to find test-topic name in metadata
+	found := false
+	for _, topic := range cgMetadata[0].Members[0].MemberMetadata.Topics {
+		if topic == testconf.Topic {
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf("Failed to find topic %s in subscribed metadata for consumergroup %s", testconf.Topic, testconf.GroupID)
+	}
+
+	// Test if we can get more consumergroups
+	cgMetadata, err = p.GetConsumerGroupMetadata(nil, 5*1000)
+	if err != nil {
+		t.Errorf("Failed to get consumer group metadata. Error %s\n", cgMetadata)
+	}
+	t.Logf("Consumer group meta data was: %v\n", cgMetadata)
+}
+
+func TestAdminClientGetConsumerGroupMetadata(t *testing.T) {
+>>>>>>> 390b650dfc895c66fe373d3d3c923aba2b480fac
+	if !testconfRead() {
+		t.Skipf("Missing testconf.json")
+	}
+
+<<<<<<< HEAD
 	config := &ConfigMap{"bootstrap.servers": testconf.Brokers}
 	if err := config.updateFromTestconf(); err != nil {
 		t.Fatalf("Failed to update test configuration: %s\n", err)
@@ -1593,4 +1725,66 @@ func TestAdminClient_ControllerID(t *testing.T) {
 	}
 
 	t.Logf("ControllerID: %d\n", controllerID)
+=======
+	// Prime topic with test messages
+	createTestMessages()
+	producerTest(t, "Priming producer", p0TestMsgs, producerCtrl{silent: true},
+		func(p *Producer, m *Message, drChan chan Event) {
+			p.ProduceChannel() <- m
+		})
+
+	/* Create consumer and subscribe to test-topic
+	 * so that consumer gets registered in broker. */
+	consumerConf := ConfigMap{"bootstrap.servers": testconf.Brokers,
+		"group.id": testconf.GroupID,
+	}
+
+	consumerConf.updateFromTestconf()
+
+	t.Logf("Creating consumer and subscribe to test-topic")
+	c, err := NewConsumer(&consumerConf)
+	if err != nil {
+		t.Fatalf("NewConsumer: %v", err)
+	}
+	defer c.Close()
+
+	c.Subscribe(testconf.Topic, nil)
+
+	// create new adminClient to test adminClient API
+	confAdmin := ConfigMap{"bootstrap.servers": testconf.Brokers}
+	confAdmin.updateFromTestconf()
+
+	a, err := NewAdminClient(&confAdmin)
+	if err != nil {
+		t.Fatalf("NewAdminClient: %v", err)
+	}
+
+	// FIXME: wait for topics to become available in metadata
+	time.Sleep(5000 * time.Millisecond)
+
+	// Test
+	cgMetadata, err := a.GetConsumerGroupMetadata(&testconf.GroupID, 5*1000)
+	if err != nil {
+		t.Errorf("Failed to get consumer group metadata for Group %s. Error %s\n", testconf.GroupID, err)
+	}
+	t.Logf("Consumer group meta data for group %s was: %v\n", testconf.GroupID, cgMetadata)
+
+	// Try to find test-topic name in metadata
+	found := false
+	for _, topic := range cgMetadata[0].Members[0].MemberMetadata.Topics {
+		if topic == testconf.Topic {
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf("Failed to find topic %s in subscribed metadata for consumergroup %s", testconf.Topic, testconf.GroupID)
+	}
+
+	// Test if we can get more consumergroups
+	cgMetadata, err = a.GetConsumerGroupMetadata(nil, 5*1000)
+	if err != nil {
+		t.Errorf("Failed to get consumer group metadata. Error %s\n", cgMetadata)
+	}
+	t.Logf("Consumer group meta data was: %v\n", cgMetadata)
+>>>>>>> 390b650dfc895c66fe373d3d3c923aba2b480fac
 }
