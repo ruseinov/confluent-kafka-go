@@ -189,7 +189,6 @@ func queryWatermarkOffsets(H Handle, topic string, partition int32, timeoutMs in
 	return low, high, nil
 }
 
-<<<<<<< HEAD
 // getWatermarkOffsets returns the clients cached low and high offsets for the given topic
 // and partition.
 func getWatermarkOffsets(H Handle, topic string, partition int32) (low, high int64, err error) {
@@ -210,7 +209,7 @@ func getWatermarkOffsets(H Handle, topic string, partition int32) (low, high int
 	high = int64(cHigh)
 
 	return low, high, nil
-=======
+}
 // getConsumerGroupsMetadata queries broker for consumer groups metadata and all its members
 // like which consumer groups and which corresponding members consume which topics
 // if consumerGroup is nil, metadata for all consumer groups will be returned
@@ -309,5 +308,4 @@ func newConsumerGroupMemberMetadataFromBytes(b []byte) (*ConsumerGroupMemberMeta
 	}
 
 	return &metadata, nil
->>>>>>> 390b650dfc895c66fe373d3d3c923aba2b480fac
 }

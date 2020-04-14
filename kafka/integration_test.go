@@ -1533,17 +1533,12 @@ func TestAdminGetMetadata(t *testing.T) {
 
 }
 
-<<<<<<< HEAD
-// Test AdminClient ClusterID.
-func TestAdminClient_ClusterID(t *testing.T) {
-=======
+
 func TestConsumerGetConsumerGroupMetadata(t *testing.T) {
->>>>>>> 390b650dfc895c66fe373d3d3c923aba2b480fac
 	if !testconfRead() {
 		t.Skipf("Missing testconf.json")
 	}
 
-<<<<<<< HEAD
 	config := &ConfigMap{"bootstrap.servers": testconf.Brokers}
 	if err := config.updateFromTestconf(); err != nil {
 		t.Fatalf("Failed to update test configuration: %s\n", err)
@@ -1569,7 +1564,6 @@ func TestConsumerGetConsumerGroupMetadata(t *testing.T) {
 
 // Test AdminClient ControllerID.
 func TestAdminClient_ControllerID(t *testing.T) {
-=======
 	// Prime topic with test messages
 	createTestMessages()
 	producerTest(t, "Priming producer", p0TestMsgs, producerCtrl{silent: true},
@@ -1694,12 +1688,10 @@ func TestProducerGetConsumerGroupMetadata(t *testing.T) {
 }
 
 func TestAdminClientGetConsumerGroupMetadata(t *testing.T) {
->>>>>>> 390b650dfc895c66fe373d3d3c923aba2b480fac
 	if !testconfRead() {
 		t.Skipf("Missing testconf.json")
 	}
 
-<<<<<<< HEAD
 	config := &ConfigMap{"bootstrap.servers": testconf.Brokers}
 	if err := config.updateFromTestconf(); err != nil {
 		t.Fatalf("Failed to update test configuration: %s\n", err)
@@ -1725,7 +1717,6 @@ func TestAdminClientGetConsumerGroupMetadata(t *testing.T) {
 	}
 
 	t.Logf("ControllerID: %d\n", controllerID)
-=======
 	// Prime topic with test messages
 	createTestMessages()
 	producerTest(t, "Priming producer", p0TestMsgs, producerCtrl{silent: true},
@@ -1786,5 +1777,4 @@ func TestAdminClientGetConsumerGroupMetadata(t *testing.T) {
 		t.Errorf("Failed to get consumer group metadata. Error %s\n", cgMetadata)
 	}
 	t.Logf("Consumer group meta data was: %v\n", cgMetadata)
->>>>>>> 390b650dfc895c66fe373d3d3c923aba2b480fac
 }
